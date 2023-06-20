@@ -5,9 +5,8 @@ part 'read_news_json.g.dart';
 @JsonSerializable()
 class ReadNewsEntity {
   /// The generated code assumes these values exist in JSON.
-  final int userId;
   final int id;
-  // @JsonKey(name: 'title')
+  final int userId;
   final String title;
   final String body;
 

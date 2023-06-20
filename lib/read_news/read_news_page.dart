@@ -62,7 +62,20 @@ class _ReadNewsPageState extends State<ReadNewsPage> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.edit),
-                      onPressed: () {},
+                      onPressed: () async {
+                        final result =
+                            await Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => AddNewsPage(
+                            isEditPage: true,
+                            title: news?.title ?? '',
+                            body: news?.body ?? '',
+                            userId: news?.userId ?? 1,
+                            index: news?.id ?? 1,
+                          ),
+                        ));
+                        // todoList.add(result);
+                        setState(() {});
+                      },
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete),

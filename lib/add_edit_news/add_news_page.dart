@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:readnews_app/read_news/read_news_controller.dart';
 
 import 'add_new_controller.dart';
 
 class AddNewsPage extends StatelessWidget {
-  const AddNewsPage({Key? key, this.isEditPage = false}) : super(key: key);
+  const AddNewsPage({
+    Key? key,
+    this.isEditPage = false,
+    this.title = '',
+    this.userId = 1,
+    this.index = 1,
+    this.body = '',
+  }) : super(key: key);
 
   final bool isEditPage;
-
-  get title => null;
-
-  get userId => null;
-
-  get body => null;
+  final String title;
+  final int userId;
+  final String body;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
@@ -32,16 +38,16 @@ class AddNewsPage extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
         onPressed: () {
-          // final todoEntity =
-          // context.read<AddTaskController>().onAddBtnClicked();
-          // Navigator.of(context).pop(todoEntity);
-          // if (todoEntity != null) {
-          //   isEditPage
-          //       ? context
-          //       .read<TodoListController>()
-          //       .updateTodo(index, todoEntity)
-          //       : context.read<TodoListController>().addTodo(todoEntity);
-          // }
+          final newsEntity =
+              context.read<AddNewsController>().onAddBtnClicked();
+          Navigator.of(context).pop(newsEntity);
+          if (newsEntity != null) {
+            isEditPage
+                ? context.read<ReadNewsController>().updateNews(
+                    index, newsEntity.userId, newsEntity.title, newsEntity.body)
+                : context.read<ReadNewsController>().addNewAPI(
+                    newsEntity.userId, newsEntity.title, newsEntity.body);
+          }
         },
         child: Text(
           isEditPage ? 'Save' : 'Add News',
@@ -62,7 +68,7 @@ class AddNewsPage extends StatelessWidget {
               const SizedBox(height: 10),
               TextFormField(
                 initialValue: isEditPage
-                    ? userId
+                    ? userId.toString()
                     : state.readNewsEntity?.userId.toString(),
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -74,7 +80,7 @@ class AddNewsPage extends StatelessWidget {
                     fillColor: Colors.white70,
                     labelText: 'User ID'),
                 onChanged: (text) {
-                  // context.read<AddNewsController>().onTitleUpdate(text);
+                  context.read<AddNewsController>().onUserIdUpdate(text);
                 },
               ),
               const SizedBox(height: 10),
@@ -90,7 +96,7 @@ class AddNewsPage extends StatelessWidget {
                     fillColor: Colors.white70,
                     labelText: 'Title'),
                 onChanged: (text) {
-                  // context.read<AddTaskController>().onTitleUpdate(text);
+                  context.read<AddNewsController>().onTitleUpdate(text);
                 },
               ),
               const SizedBox(height: 10),
@@ -106,7 +112,7 @@ class AddNewsPage extends StatelessWidget {
                     fillColor: Colors.white70,
                     labelText: 'Body'),
                 onChanged: (text) {
-                  // context.read<AddTaskController>().onTitleUpdate(text);
+                  context.read<AddNewsController>().onBodyUpdate(text);
                 },
               ),
               const SizedBox(height: 10),

@@ -31,6 +31,58 @@ class ReadNewsController extends StateNotifier<ReadNewsState> {
     }
   }
 
+  Future<ReadNewsEntity> addNewAPI(
+      int userId, String title, String body) async {
+    final response = await http.post(
+      Uri.parse('https://jsonplaceholder.typicode.com/posts'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'userId': userId,
+        'title': title,
+        'body': body,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      state.lstReadNewsEntity?.add(
+          ReadNewsEntity(userId: userId, id: 1, title: title, body: body));
+      return ReadNewsEntity.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      throw Exception('Failed to create album.');
+    }
+  }
+
+  Future<ReadNewsEntity> updateNews(
+      int index, int userId, String title, String body) async {
+    final response = await http.put(
+      Uri.parse('https://jsonplaceholder.typicode.com/posts/$index'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'userId': userId,
+        'title': title,
+        'body': body,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      state.lstReadNewsEntity?[index] =
+          ReadNewsEntity(title: title, body: body, userId: userId, id: 1);
+      return ReadNewsEntity.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to update news.');
+    }
+  }
+
   Future deleteNews(int id) async {
     final res = await http.delete(Uri.parse('$newsURL/$id'));
 
