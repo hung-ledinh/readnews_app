@@ -73,7 +73,7 @@ class ReadNewsController extends StateNotifier<ReadNewsState> {
     );
 
     if (response.statusCode == 200) {
-      state.lstReadNewsEntity?[index] =
+      state.lstReadNewsEntity?[index - 1] =
           ReadNewsEntity(title: title, body: body, userId: userId, id: 1);
       return ReadNewsEntity.fromJson(jsonDecode(response.body));
     } else {
@@ -87,7 +87,8 @@ class ReadNewsController extends StateNotifier<ReadNewsState> {
     final res = await http.delete(Uri.parse('$newsURL/$id'));
 
     if (res.statusCode == 200) {
-      state.lstReadNewsEntity?.removeWhere((item) => item.id == id);
+      // state.lstReadNewsEntity?.removeWhere((item) => item.id == id);
+      state.lstReadNewsEntity?.removeAt(id - 1);
     } else {
       throw "Sorry! Unable to delete this post.";
     }
