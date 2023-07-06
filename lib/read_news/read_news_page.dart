@@ -73,7 +73,6 @@ class _ReadNewsPageState extends State<ReadNewsPage> {
                             index: news?.id ?? 1,
                           ),
                         ));
-                        // todoList.add(result);
                         setState(() {});
                       },
                     ),
@@ -83,7 +82,7 @@ class _ReadNewsPageState extends State<ReadNewsPage> {
                         setState(() {
                           context
                               .read<ReadNewsController>()
-                              .deleteNews(news!.id);
+                              .deleteNews(news?.id ?? 0);
                         });
                       },
                     ),

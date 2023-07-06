@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 import 'package:readnews_app/read_news/read_news_json.dart';
-import 'package:http/http.dart' as http;
 
 class AddNewsController extends StateNotifier<AddNewsState> {
   AddNewsController()

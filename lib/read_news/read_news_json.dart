@@ -5,17 +5,20 @@ part 'read_news_json.g.dart';
 @JsonSerializable()
 class ReadNewsEntity {
   /// The generated code assumes these values exist in JSON.
-  final int id;
-  final int userId;
-  final String title;
-  final String body;
+  int? id;
+  int? userId;
+  String? title;
+  String? body;
 
-  ReadNewsEntity({
-    required this.userId,
-    required this.id,
-    required this.title,
-    required this.body,
-  });
+  ReadNewsEntity({this.userId, this.id, this.title, this.body});
+
+  ReadNewsEntity copyWith({int? userId, int? id, String? title, String? body}) {
+    return ReadNewsEntity()
+      ..userId = userId ?? this.userId
+      ..id = id ?? this.id
+      ..title = title ?? this.title
+      ..body = body ?? this.body;
+  }
 
   factory ReadNewsEntity.fromJson(Map<String, dynamic> json) =>
       _$ReadNewsEntityFromJson(json);

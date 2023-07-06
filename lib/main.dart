@@ -1,11 +1,19 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:readnews_app/add_edit_news/add_new_controller.dart';
 import 'package:readnews_app/read_news/read_news_controller.dart';
 import 'package:readnews_app/read_news/read_news_page.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+
+import 'api_service.dart';
+
+final dio = Dio();
+final client = RestClient(dio);
 
 void main() {
+  dio.interceptors.add(PrettyDioLogger());
   runApp(const MyApp());
 }
 

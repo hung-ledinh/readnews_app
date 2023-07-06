@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
-import 'package:http/http.dart' as http;
 import 'package:readnews_app/read_news/read_news_json.dart';
+
+import '../main.dart';
 
 class ReadNewsController extends StateNotifier<ReadNewsState> {
   ReadNewsController()
@@ -10,85 +11,52 @@ class ReadNewsController extends StateNotifier<ReadNewsState> {
             ReadNewsEntity(userId: 1, id: 1, title: 'Title', body: 'Data'),
             null));
 
-  final String newsURL = 'https://jsonplaceholder.typicode.com/posts';
-
-  Future<List<ReadNewsEntity>?> fetchGetData() async {
-    final response = await http.get(Uri.parse(newsURL));
-
-    if (response.statusCode == 200) {
+  void fetchGetData() async {
+    final response = await client.getNewPosts();
+    if (response.isNotEmpty) {
       // then parse the JSON.
-      final List result = json.decode(response.body);
       state = state.copyWith(
           readNewsEntity:
               ReadNewsEntity(userId: 1, id: 1, title: 'Title', body: 'Data'),
-          lstReadNewsEntity:
-              result.map((e) => ReadNewsEntity.fromJson(e)).toList());
-      // readNewsEntity: ReadNewsEntity.fromJson(jsonDecode(response.body)));
-      print('item: ${state.lstReadNewsEntity?.toList().length}');
-      return result.map((e) => ReadNewsEntity.fromJson(e)).toList();
+          lstReadNewsEntity: response);
     } else {
       throw Exception('Failed to load news');
     }
   }
 
-  Future<ReadNewsEntity> addNewAPI(
-      int userId, String title, String body) async {
-    final response = await http.post(
-      Uri.parse('https://jsonplaceholder.typicode.com/posts'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'userId': userId,
-        'title': title,
-        'body': body,
-      }),
-    );
-
-    if (response.statusCode == 201) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
-      state.lstReadNewsEntity?.add(
-          ReadNewsEntity(userId: userId, id: 1, title: title, body: body));
-      return ReadNewsEntity.fromJson(jsonDecode(response.body));
+  Future addNewAPI(int userId, String title, String body) async {
+    final response = await client.createNewPost(
+        ReadNewsEntity(userId: userId, title: title, body: body));
+    if (response != null) {
+      state.lstReadNewsEntity?.add(response);
     } else {
-      // If the server did not return a 201 CREATED response,
-      // then throw an exception.
-      throw Exception('Failed to create album.');
+      throw Exception('Failed to create news.');
     }
   }
 
-  Future<ReadNewsEntity> updateNews(
-      int index, int userId, String title, String body) async {
-    final response = await http.put(
-      Uri.parse('https://jsonplaceholder.typicode.com/posts/$index'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'userId': userId,
-        'title': title,
-        'body': body,
-      }),
+  Future updateNews(int id, int userId, String title, String body) async {
+    final response = await client.updateNewPost(
+      id.toString(),
+      ReadNewsEntity(
+        userId: userId,
+        title: title,
+        body: body,
+      ),
     );
 
-    if (response.statusCode == 200) {
-      state.lstReadNewsEntity?[index - 1] =
-          ReadNewsEntity(title: title, body: body, userId: userId, id: 1);
-      return ReadNewsEntity.fromJson(jsonDecode(response.body));
+    if (response != null) {
+      state.lstReadNewsEntity?[id - 1] = response;
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
       throw Exception('Failed to update news.');
     }
   }
 
   Future deleteNews(int id) async {
-    final res = await http.delete(Uri.parse('$newsURL/$id'));
+    final res = await client.deleteNewPost(id);
 
-    if (res.statusCode == 200) {
-      // state.lstReadNewsEntity?.removeWhere((item) => item.id == id);
-      state.lstReadNewsEntity?.removeAt(id - 1);
+    if (res != null) {
+      state.lstReadNewsEntity?.removeWhere((item) => item.id == id);
+      // state.lstReadNewsEntity?.removeAt(id - 1);
     } else {
       throw "Sorry! Unable to delete this post.";
     }

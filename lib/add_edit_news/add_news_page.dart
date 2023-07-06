@@ -44,9 +44,14 @@ class AddNewsPage extends StatelessWidget {
           if (newsEntity != null) {
             isEditPage
                 ? context.read<ReadNewsController>().updateNews(
-                    index, newsEntity.userId, newsEntity.title, newsEntity.body)
+                    index,
+                    newsEntity?.userId ?? 1,
+                    newsEntity.title ?? 'News',
+                    newsEntity.body ?? 'News')
                 : context.read<ReadNewsController>().addNewAPI(
-                    newsEntity.userId, newsEntity.title, newsEntity.body);
+                    newsEntity?.userId ?? 1,
+                    newsEntity.title ?? 'News',
+                    newsEntity.body ?? 'News');
           }
         },
         child: Text(
